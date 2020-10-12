@@ -27,6 +27,7 @@ pip install -r requirements.txt
 
 # Run the project
 
+After cloning the project go to the repository and do the following command:
 ```
 python3 plot.py 
 ```
