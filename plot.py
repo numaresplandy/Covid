@@ -31,9 +31,13 @@ def create_data_covid(covid_file,dep_pop_file,dep_sup_file):
         covid= covid.drop(covid[ covid['code'] ==i].index, axis=0)
     covid['sum']= covid['hosp'] + covid['rea']
     covid['sum']=covid['sum'].astype('float64')
-    for i in range(len(covid['sum'])): 
-        if np.log(covid['sum'][i])==float('-inf'):
-            covid['sum'][i]=1
+    np.seterr(divide = 'ignore')
+    tmp = covid['sum'].copy()
+    for i in range(len(tmp)): 
+        if np.log(tmp[i])==float('-inf'):
+            tmp.loc[i]=1
+    np.seterr(divide = 'warn')
+    covid['sum']=tmp
     covid['jour'] =pd.to_datetime(covid['jour']).dt.date
     covid = covid.set_index('jour') 
     return covid
@@ -43,7 +47,9 @@ def getmarksDict():
     for i in days:
         tmp = days[i].split('-')
         if tmp[2] =='01': 
-            d2[i]= mois[tmp[1]]
+            d2[i]={'label':str(tmp[2]+' '+mois[tmp[1]]),'style':{'color': 'white','font-size':'16px','font-family':'Helvetica, sans-serif'}}
+        elif tmp[2] in ['15']:
+            d2[i]={'label':tmp[2],'style':{'color': 'white','font-size':'16px'}}
     return d2
 
 def transform(date): 
@@ -70,7 +76,8 @@ styleMainDiv={
 }
 
 styleMainTitle={'text-align': 'center',
-                'color':'white'}
+                'color':'white',
+                'font-family':'Helvetica, sans-serif'}
 
 # ------------------------------------------------------------------------------
 # Import and clean data (importing csv into pandas)
@@ -90,9 +97,9 @@ firstMonth = getmarksDict()
 
 app.layout = html.Div(style=styleMainDiv,children=[
 
-    html.H1("Web Application Dashboards with Dash", style=styleMainTitle),
+    html.H1("Covid Hospitalisation et Réanimation en France", style=styleMainTitle),
     
-    html.Div([dcc.Slider(
+    html.Div(style= { 'margin-bottom':'20px' },children=[dcc.Slider(
         id='slct_day',
         min=0,
         max=len(covid.index.unique())-1,
@@ -100,10 +107,9 @@ app.layout = html.Div(style=styleMainDiv,children=[
         marks = firstMonth,
         included=False,
         value=0,
-        ),
-        html.Div(id='slider-output-container')]),
+        )]),
 
-    html.Div([dcc.Graph(id='subplot', figure={})]),
+    html.Div(style= { 'height':'83%' },children=[dcc.Graph(id='subplot', figure={},style = {'height':'100%'})])
 
 ])
 
@@ -111,8 +117,7 @@ app.layout = html.Div(style=styleMainDiv,children=[
 # ------------------------------------------------------------------------------
 # Connect the Plotly graphs with Dash Components
 @app.callback(
-   [Output(component_id='subplot', component_property='figure'),
-    Output(component_id='slider-output-container', component_property='children')],
+   Output(component_id='subplot', component_property='figure'),
     [Input(component_id='slct_day', component_property='value')]
 )
 def update_graph(option_slctd):
@@ -122,14 +127,13 @@ def update_graph(option_slctd):
     covid2 = covid2.loc[datetime.strptime(days[option_slctd], '%Y-%m-%d').date()]
     covid2 = covid2.sort_values(by=['Density(hab/km2)'])
     
-    slider_container = transform(days[option_slctd])
+
 
     fig = make_subplots(
     rows=1, cols=2,
     column_widths=[0.35, 0.65],
     horizontal_spacing=0.03,
-    specs=[[{"type": "Choroplethmapbox"}, {"type": "bar"}]],
-    subplot_titles=("Hospitalisation et Réanimation par département en France","Hospitalisation et Réanimation par département en France en fonction de la densité"))
+    specs=[[{"type": "Choroplethmapbox"}, {"type": "bar"}]])
 
     fig.add_trace(go.Bar(
         x=covid2['dep'],
@@ -165,12 +169,12 @@ def update_graph(option_slctd):
                                         name='europe_map'),
                                         row=1, col=1)
 
-    fig.update_layout(mapbox_style="carto-positron",mapbox_zoom=4.7, mapbox_center = {"lat": 46.35, "lon": 2.55},height=800)
-
+    fig.update_layout(mapbox_style="carto-positron",mapbox_zoom=4, mapbox_center = {"lat": 46.35, "lon": 2.55})
+    fig.update_layout(title_text="Nombre de personnes hospitalisé et en réanimation par département en France ordonné par densité le "+ transform(days[option_slctd]))
     fig.update_layout(barmode='relative')
     fig.update_layout(template='plotly_dark')
 
-    return fig,slider_container
+    return fig
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
