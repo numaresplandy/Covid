@@ -17,7 +17,7 @@ virtualenv Covid
 
 Activate the virtual environement: 
 ```
-source Covid/bin/activate # Activating the virtual environement
+source Covid/bin/activate 
 ```
 
 Install all requirements in the virtual environement: 
