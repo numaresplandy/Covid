@@ -10,24 +10,24 @@ To install the virualenv package :
 ```
 pip install virtualenv 
 ```
-Create a virtual environement:
+Create a virtual environement :
 ```
 virtualenv Covid
 ```
 
-Activate the virtual environement: 
+Activate the virtual environement : 
 ```
 source Covid/bin/activate 
 ```
 
-Install all requirements in the virtual environement: 
+Install all requirements in the virtual environement : 
 ```
 pip install -r requirements.txt  
 ```
 
 # Run the project
 
-After cloning the project go to the repository and do the following command:
+After cloning the project go to the repository and do the following command :
 ```
 python3 plot.py 
 ```
