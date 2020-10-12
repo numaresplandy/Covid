@@ -1,6 +1,6 @@
 # Covid
 
-This project is a data visualization and analysis of the Covid data in france. 
+This project is a data visualization and analysis of the Covid data in france. LOL 
 
 # Instalation 
 
