@@ -1,7 +1,10 @@
 # Covid
 
 The aim of this project is a to create a dashboard to visualize the Covid-19 data in France. The dashbord has been made using plotly and dash in python. 
- 
+
+![image](Data/screen_dashboard.png)
+
+
 # Installation 
 
 I encourage you to install the requirements in a virtual python environement. I am using python 3.8.2. 
