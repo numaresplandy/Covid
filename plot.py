@@ -41,9 +41,9 @@ def getmarksDict():
     for i in days:
         tmp = days[i].split('-')
         if tmp[2] =='01': 
-            d2[i]={'label':str('1 '+mois[tmp[1]]),'style':styleMarksSlider}
+            d2[i]={'label':str('1 '+mois[tmp[1]]),'style':styleMarksSlider1}
         elif tmp[2] in ['15']:
-            d2[i]={'label':str(tmp[2]+' '+mois[tmp[1]]),'style':{'color': 'white','font-size':'14px'}}
+            d2[i]={'label':str(tmp[2]+' '+mois[tmp[1]]),'style':styleMarksSlider2}
     return d2
 
 def transform(date): 
@@ -58,7 +58,9 @@ colors = {
     'background': '#111111',
     'text': '#7FDBFF'}
 
-styleMarksSlider={'color': 'white','font-size':'16px','font-family':'Helvetica, sans-serif'}
+styleMarksSlider1={'color': 'white','font-size':'16px','font-family':'Helvetica, sans-serif'}
+
+styleMarksSlider2={'color': 'white','font-size':'15px','font-family':'Helvetica, sans-serif'}
 
 styleMainDiv={
   'verticalAlign':'middle',
@@ -161,7 +163,7 @@ def update_graph(option_slctd):
 
     fig.add_trace(go.Choroplethmapbox(geojson=france, 
                                         locations=covid2['dep'],
-                                        z=covid2['sum'],
+                                        z=np.log10(covid2['sum']),
                                         customdata=covid2,
                                         showscale=False,
                                         hovertemplate ="<b>Department : %{customdata[0]} </b><br><b>Pop. Density : %{customdata[4]} hab/km2</b><br><b>Hospitalization : %{customdata[6]} pers.</b><br><b>Intensive care : %{customdata[7]} pers.</b>"+"<extra></extra>",
