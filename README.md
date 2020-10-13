@@ -1,4 +1,4 @@
-# Covid
+# Covid-19 Data Visualization
 
 The aim of this project is a to create a dashboard to visualize the Covid-19 data in France. The dashbord has been made using plotly and dash in python. 
 
